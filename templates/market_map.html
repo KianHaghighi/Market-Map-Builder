@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Market Map</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Market Map</h1>
+        
+        {% if markets_html %}
+            <h2>All Markets</h2>
+            {{ markets_html|safe }}
+        {% endif %}
+        
+        <form method="POST">
+            <div class="mb-3">
+                <label for="market" class="form-label">Select Market:</label>
+                <select name="market" id="market" class="form-select">
+                    <option value="market1">Market 1</option>
+                    <option value="market2">Market 2</option>
+                    <option value="market3">Market 3</option>
+                    <!-- Add more options as needed -->
+                </select>
+            </div>
+            <button type="submit" class="btn btn-primary">Get Companies</button>
+        </form>
+        
+        {% if companies_html %}
+            <h2>Companies</h2>
+            {{ companies_html|safe }}
+        {% endif %}
+    </div>
+</body>
+</html>

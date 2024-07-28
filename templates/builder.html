@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Welcome to the Market Map Builder</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f2f2f2;
+            text-align: center;
+            padding-top: 100px;
+        }
+        
+        h1 {
+            color: #333;
+            font-size: 36px;
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Welcome to the Market Map Builder</h1>
+    <h1 style="color: #333; font-size: 24px; margin-top: 20px;">
+        Your all-in-one research platform for early stage ventures
+    </h1>
+    <label for="datasources">Datasources:</label>
+    <select id="datasources">
+        <option value="producthunt">Product Hunt</option>
+        <option value="techcrunch">Techcrunch</option>
+        <option value="crunchbase">Crunchbase</option>
+        <option value="unicorn">Unicorn VCs</option>
+    </select>
+    <button id="fetch" onclick="getData()">Fetch</button>
+    <script>
+        function getData() {
+            // Code to fetch the desired data set goes here
+        }
+    </script>
+</body>
+<form action="/market_map" method="post">
+    <label for="market">Enter Market Keywords:</label>
+    <input type="text" id="market" name="market" required>
+    <button type="submit">Search</button>
+    <button type="create_market_map">Create Market Map</button>
+</form>
+<form action="/crunchbase_data">
+    <button type="submit">Get Crunchbase Data</button>
+</form>
+</html>
