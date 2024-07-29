@@ -26,7 +26,10 @@
         
         {% if companies_html %}
             <h2>Companies</h2>
-            {{ companies_html|safe }}
+            <form method="POST" action="/select_companies">
+                {{ companies_html|safe }}
+                <button type="submit" class="btn btn-success">Submit Selected Companies</button>
+            </form>
         {% endif %}
     </div>
 </body>

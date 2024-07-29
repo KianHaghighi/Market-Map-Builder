@@ -85,5 +85,22 @@ def crunchbase_data():
     data = fetch_crunchbase_data()
     return render_template('crunchbase_data.html', data=data)
 
+@app.route('/select_companies', methods=['POST'])
+def select_companies():
+    selected_companies = request.form.getlist('company')
+    # Process the selected companies
+    return f"Selected companies: {', '.join(selected_companies)}"
+
+def generate_companies_html(market):
+    # Example function to generate HTML for companies
+    companies = ['Company A', 'Company B', 'Company C']
+    companies_html = '<div class="form-check">'
+    for company in companies:
+        companies_html += f'<input class="form-check-input" type="checkbox" name="company" value="{company}">'
+        companies_html += f'<label class="form-check-label">{company}</label><br>'
+    companies_html += '</div>'
+    return companies_html
+
+
 if __name__ == '__main__':
     app.run(debug=True)
