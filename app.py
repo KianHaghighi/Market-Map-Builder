@@ -3,7 +3,6 @@ from flask_sqlalchemy import SQLAlchemy
 
 import pandas as pd
 import requests
-# from market_map import get_data
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:////tmp/test.db'
@@ -25,32 +24,12 @@ def add_user():
     db.session.commit()
     return redirect('/')
 
-# @app.route('/market_map', methods=['GET', 'POST'])
-# def market_map():
-#     df_ph = pd.read_csv("datasets\product_hunt_data\\2020.csv")
-#     markets_html = df_ph.to_html(classes='table table-striped', index=False)
-
-#     if request.method == 'POST':
-#         market = request.form['market']
-#         # Assuming get_data() fetches and processes data based on the market
-#         companies = get_data(market=market)
-#         # Convert the companies data to HTML if it's a DataFrame
-#         companies_html = companies.to_html(classes='table table-striped', index=False)
-#         return render_template('market_map.html', markets_html=markets_html, companies_html=companies_html)
-    
-#     # GET request
-#     return render_template('market_map.html', markets_html=markets_html, companies_html=None)
-
 @app.route('/market_map', methods=['GET', 'POST'])
 def market_map():
     df_ph = pd.read_csv("datasets/product_hunt_data/2020.csv")  # Adjust path as needed
     df_pf_2021 = pd.read_csv("datasets/product_hunt_data/2021.csv")  # Adjust path as needed
     df_ph_2022 = pd.read_csv("datasets/product_hunt_data/2022.csv")  # Adjust path as needed
     df_ph = pd.concat([df_ph, df_pf_2021, df_ph_2022], ignore_index=True)
-
-    #dataframe for unicorn dataset
-    #takes a while to load, so for now, I have it commented out
-    #df_unicorn = pd.read_csv("datasets\\UnicornNestDatasetApril2020.csv", encoding='ISO-8859-1')
 
     markets_html = ""
 
