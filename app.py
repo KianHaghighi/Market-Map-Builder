@@ -68,6 +68,69 @@ def market_map():
 
     return render_template('market_map.html', markets_html=markets_html)
 
+@app.route('/crunchbase_data')
+def crunchbase_data():
+    data = fetch_crunchbase_data()
+    return render_template('crunchbase_data.html', data=data)
+
+@app.route('/select_companies', methods=['POST'])
+def select_companies():
+    selected_companies = request.form.getlist('company')
+    # Process the selected companies
+    return f"Selected companies: {', '.join(selected_companies)}"
+
+def generate_companies_html(market):
+    # Example function to generate HTML for companies
+    companies = ['Company A', 'Company B', 'Company C']
+    companies_html = '<div class="form-check">'
+    for company in companies:
+        companies_html += f'<input class="form-check-input" type="checkbox" name="company" value="{company}">'
+        companies_html += f'<label class="form-check-label">{company}</label><br>'
+    companies_html += '</div>'
+    return companies_html
+
+
+@app.route('/producthunt_data')
+def producthunt_data():
+    data = fetch_producthunt_data()
+    if data:
+        return render_template('producthunt_data.html', data=data)
+    else:
+        return "Error fetching data from Product Hunt"
+
+def fetch_producthunt_data():
+    url = "https://api.producthunt.com/v2/api/graphql"
+    headers = {
+        "Authorization": "Bearer WOvgoSDNLBtwGJ_iWZYUV6HOOMB_Mg0v__XS_MTAblQ",
+        "Content-Type": "application/json"
+    }
+    query = """
+    {
+      posts {
+        edges {
+          node {
+            name
+            tagline
+            votesCount
+            website
+          }
+        }
+      }
+    }
+    """
+    response = requests.post(url, headers=headers, json={"query": query})
+    if response.status_code == 200:
+        return response.json()["data"]["posts"]["edges"]
+    else:
+        return None
+
+if __name__ == '__main__':
+    app.run(debug=True)
+
+@app.route('/producthunt_data', methods=['GET'])
+def producthunt_data():
+    return render_template('producthunt_data.html')
+
 def fetch_crunchbase_data():
     url = "https://api.crunchbase.com/api/v3.1/your_endpoint"
     params = {
@@ -101,6 +164,40 @@ def generate_companies_html(market):
     companies_html += '</div>'
     return companies_html
 
+
+@app.route('/producthunt_data')
+def producthunt_data():
+    data = fetch_producthunt_data()
+    if data:
+        return render_template('producthunt_data.html', data=data)
+    else:
+        return "Error fetching data from Product Hunt"
+
+def fetch_producthunt_data():
+    url = "https://api.producthunt.com/v2/api/graphql"
+    headers = {
+        "Authorization": "Bearer WOvgoSDNLBtwGJ_iWZYUV6HOOMB_Mg0v__XS_MTAblQ",
+        "Content-Type": "application/json"
+    }
+    query = """
+    {
+      posts {
+        edges {
+          node {
+            name
+            tagline
+            votesCount
+            website
+          }
+        }
+      }
+    }
+    """
+    response = requests.post(url, headers=headers, json={"query": query})
+    if response.status_code == 200:
+        return response.json()["data"]["posts"]["edges"]
+    else:
+        return None
 
 if __name__ == '__main__':
     app.run(debug=True)
