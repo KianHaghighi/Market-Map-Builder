@@ -24,28 +24,41 @@ def add_user():
     db.session.commit()
     return redirect('/')
 
+def generate_checkboxes_html(df):
+    checkboxes_html = ""
+    for index, row in df.iterrows():
+        checkboxes_html += f'<div class="form-check">'
+        checkboxes_html += f'<input class="form-check-input" type="checkbox" name="selected_rows" value="{index}" id="row_{index}">'
+        checkboxes_html += f'<label class="form-check-label" for="row_{index}">{row["Topic"]}</label>'
+        checkboxes_html += '</div>'
+    return checkboxes_html
+
 @app.route('/market_map', methods=['GET', 'POST'])
 def market_map():
+    # Product Hunt data set
     df_ph = pd.read_csv("datasets/product_hunt_data/2020.csv")  # Adjust path as needed
     df_pf_2021 = pd.read_csv("datasets/product_hunt_data/2021.csv")  # Adjust path as needed
     df_ph_2022 = pd.read_csv("datasets/product_hunt_data/2022.csv")  # Adjust path as needed
     df_ph = pd.concat([df_ph, df_pf_2021, df_ph_2022], ignore_index=True)
 
     markets_html = ""
+    checkboxes_html = generate_checkboxes_html(df_ph)
 
     if request.method == 'POST':
+        print(request.form)
         market = request.form['market']
+        selected_rows = request.form.getlist('selected_rows')
         # Filter the DataFrame based on the market keyword.
-        # This is a placeholder; you'll need to replace it with actual filtering logic.
         filtered_df = df_ph[df_ph['Topic'].str.contains(market, case=False, na=False)]
-        #alter the links so that the user can be directed
+        # Alter the links so that the user can be directed
         df_ph['ShortUrl'] = df_ph['ShortUrl'].apply(lambda x: f'<a href="{x}">{x}</a>')
         markets_html = filtered_df.to_html(escape=False, classes='table table-striped', index=False)
     else:
         # Optionally, display the entire dataset or a subset when the page first loads
         markets_html = df_ph.to_html(escape=False, classes='table table-striped', index=False)
 
-    return render_template('market_map.html', markets_html=markets_html)
+    return render_template('market_map.html', markets_html=markets_html, checkboxes_html=checkboxes_html)
+
 
 @app.route('/crunchbase_data')
 def crunchbase_data():
@@ -106,9 +119,6 @@ def fetch_producthunt_data():
 if __name__ == '__main__':
     app.run(debug=True)
 
-@app.route('/producthunt_data', methods=['GET'])
-def producthunt_data():
-    return render_template('producthunt_data.html')
 
 def fetch_crunchbase_data():
     url = "https://api.crunchbase.com/api/v3.1/your_endpoint"
