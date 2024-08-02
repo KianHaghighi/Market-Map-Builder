@@ -8,21 +8,9 @@ app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:////tmp/test.db'
 db = SQLAlchemy(app)
 
-class User(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    username = db.Column(db.String(80), unique=True, nullable=False)
-    email = db.Column(db.String(120), unique=True, nullable=False)
-
 @app.route('/')
 def index():
     return render_template('builder.html')
-
-@app.route('/users', methods=['POST'])
-def add_user():
-    user = User(username=request.form['username'], email=request.form['email'])
-    db.session.add(user)
-    db.session.commit()
-    return redirect('/')
 
 def generate_checkboxes_html(df):
     checkboxes_html = ""
