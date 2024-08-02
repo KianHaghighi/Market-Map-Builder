@@ -4,10 +4,13 @@ from flask_sqlalchemy import SQLAlchemy
 import pandas as pd
 import requests
 import os
+import jsonify
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:////tmp/test.db'
 db = SQLAlchemy(app)
+
+PRODUCT_HUNT_API_TOKEN = os.getenv('PRODUCT_HUNT_API_TOKEN')
 
 @app.route('/')
 def index():
@@ -70,31 +73,32 @@ def generate_companies_html(market):
     companies_html += '</div>'
     return companies_html
 
-def fetch_producthunt_data():
-    url = "https://api.producthunt.com/v2/api/graphql"
-    headers = {
-        "Authorization": "Bearer WOvgoSDNLBtwGJ_iWZYUV6HOOMB_Mg0v__XS_MTAblQ",
-        "Content-Type": "application/json"
-    }
-    query = """
-    {
-      posts {
-        edges {
-          node {
-            name
-            tagline
-            votesCount
-            website
-          }
+# Example GraphQL query
+query = """
+query {
+  posts(order: TOP_DAY) {
+    edges {
+      node {
+        id
+        name
+        tagline
+        votes_count
+        comments_count
+        makers {
+          id
+          name
         }
       }
     }
-    """
-    response = requests.post(url, headers=headers, json={"query": query})
-    if response.status_code == 200:
-        return response.json()["data"]["posts"]["edges"]
-    else:
-        return None
+  }
+}
+"""
+
+@app.route('/producthunt_data', methods=['GET'])
+def get_product_hunt_data():
+    data = fetch_product_hunt_data(query)
+    # Process data, extract relevant fields, and send to ML model
+    return jsonify(data)
 
 def fetch_crunchbase_data():
     url = "https://api.crunchbase.com/api/v3.1/your_endpoint"
@@ -118,46 +122,23 @@ def generate_companies_html(market):
     companies_html += '</div>'
     return companies_html
 
-
-@app.route('/producthunt_data')
-def producthunt_data():
-    data = fetch_producthunt_data()
-    if data:
-        return render_template('producthunt_data.html', data=data)
-    else:
-        return "Error fetching data from Product Hunt"
-
-def fetch_producthunt_data():
-    url = "https://api.producthunt.com/v2/api/graphql"
-    headers = {
-        "Authorization": "Bearer WOvgoSDNLBtwGJ_iWZYUV6HOOMB_Mg0v__XS_MTAblQ",
-        "Content-Type": "application/json"
-    }
-    query = """
-    {
-      posts {
-        edges {
-          node {
-            name
-            tagline
-            votesCount
-            website
-          }
-        }
-      }
-    }
-    """
-    response = requests.post(url, headers=headers, json={"query": query})
-    if response.status_code == 200:
-        return response.json()["data"]["posts"]["edges"]
-    else:
-        return None
-
 @app.route('/create_from_scratch', methods=['GET', 'POST'])
 def create_from_scratch():
     project_id = os.getenv('DIALOGFLOW_PROJECT_ID')
     agent_id = os.getenv('DIALOGFLOW_AGENT_ID')
     return render_template('create_from_scratch.html', project_id=project_id, agent_id=agent_id)
+
+def fetch_product_hunt_data(query):
+    headers = {
+        'Authorization': f'Bearer {PRODUCT_HUNT_API_TOKEN}',
+        'Content-Type': 'application/json'
+    }
+    response = requests.post('https://api.producthunt.com/v2/graphql', json={'query': query}, headers=headers)
+    print(response.status_code)
+    if response.status_code == 200:
+        return response.json()
+    else:
+        return "Error fetching data"
 
 if __name__ == '__main__':
     app.run(debug=True)
