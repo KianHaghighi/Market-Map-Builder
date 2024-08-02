@@ -3,6 +3,7 @@ from flask_sqlalchemy import SQLAlchemy
 
 import pandas as pd
 import requests
+import os
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:////tmp/test.db'
@@ -154,7 +155,9 @@ def fetch_producthunt_data():
 
 @app.route('/create_from_scratch', methods=['GET', 'POST'])
 def create_from_scratch():
-    return render_template('create_from_scratch.html')
+    project_id = os.getenv('DIALOGFLOW_PROJECT_ID')
+    agent_id = os.getenv('DIALOGFLOW_AGENT_ID')
+    return render_template('create_from_scratch.html', project_id=project_id, agent_id=agent_id)
 
 if __name__ == '__main__':
     app.run(debug=True)
