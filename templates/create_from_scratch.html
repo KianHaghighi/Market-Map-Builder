@@ -8,7 +8,7 @@
 </head>
 <body>
     <h1>Create Market Map from Scratch</h1>
-    <form action="/create_from_scratch" method="post">
+    <form action="/create_from_scratch" method="post" enctype="multipart/form-data">
         <label for="market">Enter Market Keywords:</label>
         <input type="text" id="market" name="market" required><br>
 
@@ -23,6 +23,9 @@
 
         <label for="thesis">Investment Thesis:</label>
         <textarea id="thesis" name="thesis" rows="4" cols="50" required></textarea><br>
+
+        <label for="csv_file">Import CSV:</label>
+        <input type="file" id="csv_file" name="csv_file" accept=".csv"><br>
 
         <button type="submit">Create Market Map</button>
     </form>
