@@ -140,5 +140,10 @@ def fetch_product_hunt_data(query):
     else:
         return "Error fetching data"
 
+
+@app.route('/upload_your_own', methods=['GET', 'POST'])
+def upload_your_own():
+    return render_template('upload.html')
+
 if __name__ == '__main__':
     app.run(debug=True)
