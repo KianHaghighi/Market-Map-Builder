@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create from Scratch</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+<body>
+    <h1>Create Market Map from Scratch</h1>
+    <form action="/create_from_scratch" method="post">
+        <label for="market">Enter Market Keywords:</label>
+        <input type="text" id="market" name="market" required><br>
+
+        <label for="funding">Funding Amount:</label>
+        <input type="number" id="funding" name="funding" required><br>
+
+        <label for="date_founded">Date Founded:</label>
+        <input type="date" id="date_founded" name="date_founded" required><br>
+
+        <label for="location">Location:</label>
+        <input type="text" id="location" name="location" required><br>
+
+        <label for="thesis">Investment Thesis:</label>
+        <textarea id="thesis" name="thesis" rows="4" cols="50" required></textarea><br>
+
+        <button type="submit">Create Market Map</button>
+    </form>
+</body>
+</html>

@@ -81,15 +81,6 @@ def generate_companies_html(market):
     companies_html += '</div>'
     return companies_html
 
-
-@app.route('/producthunt_data')
-def producthunt_data():
-    data = fetch_producthunt_data()
-    if data:
-        return render_template('producthunt_data.html', data=data)
-    else:
-        return "Error fetching data from Product Hunt"
-
 def fetch_producthunt_data():
     url = "https://api.producthunt.com/v2/api/graphql"
     headers = {
@@ -116,10 +107,6 @@ def fetch_producthunt_data():
     else:
         return None
 
-if __name__ == '__main__':
-    app.run(debug=True)
-
-
 def fetch_crunchbase_data():
     url = "https://api.crunchbase.com/api/v3.1/your_endpoint"
     params = {
@@ -131,17 +118,6 @@ def fetch_crunchbase_data():
         return response.json()  # Or process the response as needed
     else:
         return "Error fetching data"
-
-@app.route('/crunchbase_data')
-def crunchbase_data():
-    data = fetch_crunchbase_data()
-    return render_template('crunchbase_data.html', data=data)
-
-@app.route('/select_companies', methods=['POST'])
-def select_companies():
-    selected_companies = request.form.getlist('company')
-    # Process the selected companies
-    return f"Selected companies: {', '.join(selected_companies)}"
 
 def generate_companies_html(market):
     # Example function to generate HTML for companies
@@ -187,6 +163,10 @@ def fetch_producthunt_data():
         return response.json()["data"]["posts"]["edges"]
     else:
         return None
+
+@app.route('/create_from_scratch', methods=['GET', 'POST'])
+def create_from_scratch():
+    return render_template('create_from_scratch.html')
 
 if __name__ == '__main__':
     app.run(debug=True)
