@@ -8,21 +8,9 @@ app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:////tmp/test.db'
 db = SQLAlchemy(app)
 
-class User(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    username = db.Column(db.String(80), unique=True, nullable=False)
-    email = db.Column(db.String(120), unique=True, nullable=False)
-
 @app.route('/')
 def index():
     return render_template('builder.html')
-
-@app.route('/users', methods=['POST'])
-def add_user():
-    user = User(username=request.form['username'], email=request.form['email'])
-    db.session.add(user)
-    db.session.commit()
-    return redirect('/')
 
 def generate_checkboxes_html(df):
     checkboxes_html = ""
@@ -81,15 +69,6 @@ def generate_companies_html(market):
     companies_html += '</div>'
     return companies_html
 
-
-@app.route('/producthunt_data')
-def producthunt_data():
-    data = fetch_producthunt_data()
-    if data:
-        return render_template('producthunt_data.html', data=data)
-    else:
-        return "Error fetching data from Product Hunt"
-
 def fetch_producthunt_data():
     url = "https://api.producthunt.com/v2/api/graphql"
     headers = {
@@ -116,10 +95,6 @@ def fetch_producthunt_data():
     else:
         return None
 
-if __name__ == '__main__':
-    app.run(debug=True)
-
-
 def fetch_crunchbase_data():
     url = "https://api.crunchbase.com/api/v3.1/your_endpoint"
     params = {
@@ -131,17 +106,6 @@ def fetch_crunchbase_data():
         return response.json()  # Or process the response as needed
     else:
         return "Error fetching data"
-
-@app.route('/crunchbase_data')
-def crunchbase_data():
-    data = fetch_crunchbase_data()
-    return render_template('crunchbase_data.html', data=data)
-
-@app.route('/select_companies', methods=['POST'])
-def select_companies():
-    selected_companies = request.form.getlist('company')
-    # Process the selected companies
-    return f"Selected companies: {', '.join(selected_companies)}"
 
 def generate_companies_html(market):
     # Example function to generate HTML for companies
@@ -187,6 +151,10 @@ def fetch_producthunt_data():
         return response.json()["data"]["posts"]["edges"]
     else:
         return None
+
+@app.route('/create_from_scratch', methods=['GET', 'POST'])
+def create_from_scratch():
+    return render_template('create_from_scratch.html')
 
 if __name__ == '__main__':
     app.run(debug=True)
