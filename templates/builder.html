@@ -15,49 +15,43 @@
             font-size: 36px;
             margin-bottom: 20px;
         }
+
+        h2 {
+            color: #333;
+            font-size: 24px;
+            margin-top: 20px;
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 10px 20px;
+            font-size: 16px;
+            font-weight: bold;
+            text-align: center;
+            text-decoration: none;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 10px;
+        }
+
+        .btn:hover {
+            background-color: #0056b3;
+        }
     </style>
 </head>
 <body>
     <h1>Welcome to the Market Map Builder</h1>
-    <h1 style="color: #333; font-size: 24px; margin-top: 20px;">
-        Your all-in-one research platform for early stage ventures. The Mind Map for VCs and Startups.
-    </h1>
+    <h2>Your all-in-one research platform for early stage ventures. The Mind Map for VCs and Startups.</h2>
     <br><br>
     <form action="/market_map" method="post">
-        <button type="button" onclick="window.location.href='/create_from_scratch'">Create from Scratch</button>
+        <button type="button" class="btn" onclick="window.location.href='/create_from_scratch'">Create from Scratch</button>
+        <button type="button" class="btn" onclick="window.location.href='/upload_your_own'">Upload your own</button>
     </form>
-        <label for="market">Enter Market Keywords:</label>
-        <input type="text" id="market" name="market" required>
-        <button type="submit">Search Dataset</button>
-        <button type="create_market_map">Create Market Map</button>
-    </form>
-    <a href="/producthunt_data" class="btn btn-primary">Product Hunt</a>
-    <label for="numSegments">Number of Segments:</label>
-    <input type="number" id="numSegments" name="numSegments" min="1" max="10" onchange="createSegmentInputs()">
+    <a href="/producthunt_data" class="btn">Product Hunt</a>
     <div id="segmentNames"></div>
     <br>
-    <button id="fetch" onclick="getData()">Fetch</button>
-    <script>
-        function createSegmentInputs() {
-            const numSegments = document.getElementById('numSegments').value;
-            const segmentNamesDiv = document.getElementById('segmentNames');
-            segmentNamesDiv.innerHTML = '';
-            for (let i = 1; i <= numSegments; i++) {
-                const label = document.createElement('label');
-                label.setAttribute('for', 'segment' + i);
-                label.innerText = 'Segment ' + i + ' Name:';
-                const input = document.createElement('input');
-                input.type = 'text';
-                input.id = 'segment' + i;
-                input.name = 'segment' + i;
-                segmentNamesDiv.appendChild(label);
-                segmentNamesDiv.appendChild(input);
-                segmentNamesDiv.appendChild(document.createElement('br'));
-            }
-        }
-        function getData() {
-            // Code to fetch the desired data set goes here
-        }
-    </script>
 </body>
-<form action="/market_map" method="post">
+</html>
