@@ -126,6 +126,7 @@ def fetch_product_hunt_data(query, access_token):
                     id
                     name
                     tagline
+                    website
                     # Remove or replace the following fields if they don't exist
                     # votes_count
                     # comments_count
