@@ -118,6 +118,22 @@ def fetch_product_hunt_data(query, access_token):
         'Authorization': f'Bearer {access_token}',
         'Content-Type': 'application/json'
     }
+    query = """
+    {
+        posts(order: NEWEST) {
+            edges {
+                node {
+                    id
+                    name
+                    tagline
+                    # Remove or replace the following fields if they don't exist
+                    # votes_count
+                    # comments_count
+                }
+            }
+        }
+    }
+    """
     response = requests.post(url, json={'query': query}, headers=headers)
     print(response.status_code)  # Debugging status code
     if response.status_code == 200:
