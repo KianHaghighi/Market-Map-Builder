@@ -127,6 +127,13 @@ def fetch_product_hunt_data(query, access_token):
                     name
                     tagline
                     website
+                    topics {
+                        edges {
+                            node {
+                                name
+                            }
+                        }
+                    }
                     # Remove or replace the following fields if they don't exist
                     # votes_count
                     # comments_count

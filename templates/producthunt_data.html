@@ -15,6 +15,11 @@
                         <small class="text-muted">{{ post.node.createdAt }}</small>
                     </div>
                     <p class="mb-1">{{ post.node.tagline }}</p>
+                    <p class="mb-1">Topics: 
+                        {% for topic in post.node.topics.edges %}
+                            <span class="badge bg-info">{{ topic.node.name }}</span>
+                        {% endfor %}
+                    </p>
                     <div class="d-flex justify-content-between align-items-center">
                         <div>
                             <span class="badge bg-primary">Votes: {{ post.node.votesCount }}</span>
