@@ -1,16 +1,17 @@
-from flask import Flask, render_template, request
+from flask import Flask, render_template, request, jsonify
 from flask_sqlalchemy import SQLAlchemy
 
 import pandas as pd
 import requests
 import os
-import jsonify
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:////tmp/test.db'
 db = SQLAlchemy(app)
 
 PRODUCT_HUNT_API_TOKEN = os.getenv('PRODUCT_HUNT_API_TOKEN')
+CLIENT_ID = os.getenv('PRODUCT_HUNT_CLIENT_ID')
+CLIENT_SECRET = os.getenv('PRODUCT_HUNT_CLIENT_SECRET')
 
 @app.route('/')
 def index():
@@ -28,9 +29,9 @@ def generate_checkboxes_html(df):
 @app.route('/market_map', methods=['GET', 'POST'])
 def market_map():
     # Product Hunt data set
-    df_ph = pd.read_csv("datasets/product_hunt_data/2020.csv")  # Adjust path as needed
-    df_pf_2021 = pd.read_csv("datasets/product_hunt_data/2021.csv")  # Adjust path as needed
-    df_ph_2022 = pd.read_csv("datasets/product_hunt_data/2022.csv")  # Adjust path as needed
+    df_ph = pd.read_csv("datasets/product_hunt_data/2020.csv")  
+    df_pf_2021 = pd.read_csv("datasets/product_hunt_data/2021.csv")  
+    df_ph_2022 = pd.read_csv("datasets/product_hunt_data/2022.csv")
     df_ph = pd.concat([df_ph, df_pf_2021, df_ph_2022], ignore_index=True)
 
     markets_html = ""
@@ -93,12 +94,47 @@ query {
   }
 }
 """
+# Function to get access token
+def get_access_token(client_id, client_secret):
+    url = "https://api.producthunt.com/v2/oauth/token"
+    data = {
+        "client_id": client_id,
+        "client_secret": client_secret,
+        "grant_type": "client_credentials"
+    }
+    headers = {
+        "Content-Type": "application/json"
+    }
+    response = requests.post(url, json=data, headers=headers)
+    if response.status_code == 200:
+        return response.json().get("access_token")
+    else:
+        return None
+
+# Function to fetch data from Product Hunt
+def fetch_product_hunt_data(query, access_token):
+    url = "https://api.producthunt.com/v2/api/graphql"
+    headers = {
+        'Authorization': f'Bearer {access_token}',
+        'Content-Type': 'application/json'
+    }
+    response = requests.post(url, json={'query': query}, headers=headers)
+    print(response.status_code)  # Debugging status code
+    if response.status_code == 200:
+        return response.json()
+    else:
+        return "Error fetching data"
 
 @app.route('/producthunt_data', methods=['GET'])
 def get_product_hunt_data():
-    data = fetch_product_hunt_data(query)
-    # Process data, extract relevant fields, and send to ML model
-    return jsonify(data)
+    client_id = CLIENT_ID
+    client_secret = CLIENT_SECRET
+    access_token = get_access_token(client_id, client_secret)
+    if access_token:
+        data = fetch_product_hunt_data(query, access_token)
+        return jsonify(data)
+    else:
+        return jsonify({"error": "Failed to obtain access token"})
 
 def fetch_crunchbase_data():
     url = "https://api.crunchbase.com/api/v3.1/your_endpoint"
@@ -127,19 +163,6 @@ def create_from_scratch():
     project_id = os.getenv('DIALOGFLOW_PROJECT_ID')
     agent_id = os.getenv('DIALOGFLOW_AGENT_ID')
     return render_template('create_from_scratch.html', project_id=project_id, agent_id=agent_id)
-
-def fetch_product_hunt_data(query):
-    headers = {
-        'Authorization': f'Bearer {PRODUCT_HUNT_API_TOKEN}',
-        'Content-Type': 'application/json'
-    }
-    response = requests.post('https://api.producthunt.com/v2/graphql', json={'query': query}, headers=headers)
-    print(response.status_code)
-    if response.status_code == 200:
-        return response.json()
-    else:
-        return "Error fetching data"
-
 
 @app.route('/upload_your_own', methods=['GET', 'POST'])
 def upload_your_own():
