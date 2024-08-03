@@ -149,7 +149,7 @@ def get_product_hunt_data():
     access_token = get_access_token(client_id, client_secret)
     if access_token:
         data = fetch_product_hunt_data(query, access_token)
-        return jsonify(data)
+        return render_template('producthunt_data.html', data=data['data']['posts']['edges'])
     else:
         return jsonify({"error": "Failed to obtain access token"})
 
