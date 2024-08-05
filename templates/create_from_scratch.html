@@ -1,60 +1,61 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Create from Scratch</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Create from Scratch</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+  <script src="path/to/your/script.js"></script> <!-- Include your JavaScript file here -->
 </head>
 <body>
-    <h1>Create Market Map from Scratch</h1>
-    <form action="/create_from_scratch" method="post" enctype="multipart/form-data">
-        <label for="market">Enter Market Keywords:</label>
-        <input type="text" id="market" name="market" required><br>
+  <h1>Create Market Map from Scratch</h1>
+  <form action="/create_from_scratch" method="post" enctype="multipart/form-data">
+    <label for="market">Enter Market Keywords:</label>
+    <input type="text" id="market" name="market" required><br>
 
-        <label for="funding">Funding Amount:</label>
-        <input type="number" id="funding" name="funding" required><br>
+    <label for="funding">Funding Amount:</label>
+    <input type="number" id="funding" name="funding" required><br>
 
-        <label for="date_founded">Date Founded:</label>
-        <input type="date" id="date_founded" name="date_founded" required><br>
+    <label for="date_founded">Date Founded:</label>
+    <input type="date" id="date_founded" name="date_founded" required><br>
 
-        <label for="location">Location:</label>
-        <input type="text" id="location" name="location" required><br>
+    <label for="location">Location:</label>
+    <input type="text" id="location" name="location" required><br>
 
-        <label for="thesis">Investment Thesis:</label>
-        <textarea id="thesis" name="thesis" rows="4" cols="50" required></textarea><br>
+    <label for="thesis">Investment Thesis:</label>
+    <textarea id="thesis" name="thesis" rows="4" cols="50" required></textarea><br>
 
-        <label for="csv_file">Import CSV:</label>
-        <input type="file" id="csv_file" name="csv_file" accept=".csv"><br>
+    <label for="csv_file">Import CSV:</label>
+    <input type="file" id="csv_file" name="csv_file" accept=".csv"><br>
 
-        <button type="submit">Create Market Map</button>
-    </form>
+    <button type="submit">Create Market Map</button>
+  </form>
 
-    <!-- Dialogflow Chatbot Integration -->
-    <link rel="stylesheet" href="https://www.gstatic.com/dialogflow-console/fast/df-messenger/prod/v1/themes/df-messenger-default.css">
-    <script src="https://www.gstatic.com/dialogflow-console/fast/df-messenger/prod/v1/df-messenger.js"></script>
-    <df-messenger
-      location="us-central1"
-      project-id="{{ project_id }}"
-      agent-id="{{ agent_id }}"
-      language-code="en"
-      max-query-length="-1">
-      <df-messenger-chat-bubble
-       chat-title="MapAgent">
-      </df-messenger-chat-bubble>
-    </df-messenger>
-    <style>
-      df-messenger {
-        z-index: 999;
-        position: fixed;
-        --df-messenger-font-color: #000;
-        --df-messenger-font-family: Google Sans;
-        --df-messenger-chat-background: #f3f6fc;
-        --df-messenger-message-user-background: #d3e3fd;
-        --df-messenger-message-bot-background: #fff;
-        bottom: 16px;
-        right: 16px;
-      }
-    </style>
+  <!-- Dialogflow Chatbot Integration -->
+  <link rel="stylesheet" href="https://www.gstatic.com/dialogflow-console/fast/df-messenger/prod/v1/themes/df-messenger-default.css">
+  <script src="https://www.gstatic.com/dialogflow-console/fast/df-messenger/prod/v1/df-messenger.js"></script>
+  <df-messenger
+    location="us-central1"
+    project-id="{{ project_id }}"
+    agent-id="{{ agent_id }}"
+    language-code="en"
+    max-query-length="-1">
+    <df-messenger-chat-bubble
+     chat-title="MapAgent">
+    </df-messenger-chat-bubble>
+  </df-messenger>
+  <style>
+    df-messenger {
+    z-index: 999;
+    position: fixed;
+    --df-messenger-font-color: #000;
+    --df-messenger-font-family: Google Sans;
+    --df-messenger-chat-background: #f3f6fc;
+    --df-messenger-message-user-background: #d3e3fd;
+    --df-messenger-message-bot-background: #fff;
+    bottom: 16px;
+    right: 16px;
+    }
+  </style>
 </body>
 </html>
