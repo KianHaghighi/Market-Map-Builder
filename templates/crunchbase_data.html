@@ -1,5 +1,16 @@
-<ul>
-    {% for item in data %}
-      <li>{{ item.some_attribute }}</li>
-    {% endfor %}
-    </ul>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Crunchbase Data</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Crunchbase Data</h1>
+        <div>
+            {{ table_html | safe }}
+        </div>
+    </div>
+</body>
+</html>

@@ -55,8 +55,16 @@ def market_map():
 
 @app.route('/crunchbase_data')
 def crunchbase_data():
-    data = fetch_crunchbase_data()
-    return render_template('crunchbase_data.html', data=data)
+    # Read the CSV file
+    df = pd.read_csv('datasets/crunchbase_data/investments_VC.csv', encoding='ISO-8859-1')
+    
+    # Get the first 5 rows
+    df_head = df.head()
+    
+    # Convert to HTML table
+    table_html = df_head.to_html(classes='table table-striped', index=False)
+    
+    return render_template('crunchbase_data.html', table_html=table_html)
 
 @app.route('/select_companies', methods=['POST'])
 def select_companies():

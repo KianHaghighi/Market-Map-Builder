@@ -1,42 +1,49 @@
-import pandas as pd
-import sqlite3
+from app import db
+from __init__ import create_app
+from models import Company
+import csv
+from datetime import datetime
 
-def add_companies_from_csv(csv_file_path, db_file_path):
-    # Read the CSV file
-    df = pd.read_csv(csv_file_path)
-    
-    # Connect to the SQLite database
-    conn = sqlite3.connect(db_file_path)
-    cursor = conn.cursor()
-    
-    # Create the companies table if it doesn't exist
-    cursor.execute('''
-    CREATE TABLE IF NOT EXISTS companies (
-        id INTEGER PRIMARY KEY,
-        name TEXT,
-        category TEXT,
-        subcategory TEXT
-    )
-    ''')
-    
-    # Insert data from the DataFrame into the database
-    for _, row in df.iterrows():
-        cursor.execute('''
-        INSERT INTO companies (name, category, subcategory)
-        VALUES (?, ?, ?)
-        ''', (row['name'], row['topics'], row['topics']))
-    
-    # Commit the changes and close the connection
-    conn.commit()
-    conn.close()
-    
-    print(f"Successfully added {len(df)} companies to the database.")
+def update_schema():
+    with create_app().app_context():
+        db.engine.execute('ALTER TABLE company ADD COLUMN founded_date DATE;')
 
-# Usage
-data_path = "datasets\product_hunt_data\phunt_startups\posts.csv"
-db_file_path = "market_map.db"
-add_companies_from_csv(data_path, db_file_path)
+def seed_data():
+    # Example: Add some initial data
+    with create_app.app_context():
+        companies = [
+            Company(name="TechCorp", category="Technology", subcategory="Software"),
+            Company(name="GreenEnergy", category="Energy", subcategory="Renewable")
+        ]
+        db.session.add_all(companies)
+        db.session.commit()
 
-data_path_col = "datasets\product_hunt_data\phunt_startups\collections.csv"
-db_file_path = "market_map.db"
-add_companies_from_csv(data_path_col, db_file_path)
+def import_from_csv(filename):
+    # Example: Import data from a CSV file
+    with create_app().app_context():
+        with open(filename, 'r') as file:
+            csv_reader = csv.DictReader(file)
+            for row in csv_reader:
+                company = Company(name=row['name'], category=row['category'], subcategory=row['subcategory'])
+                db.session.add(company)
+        db.session.commit()
+
+def cleanup_old_data():
+    # Example: Remove companies older than a certain date
+    with create_app().app_context():
+        some_date = datetime(2000, 1, 1)
+        Company.query.filter(Company.created_date < some_date).delete()
+        db.session.commit()
+
+def delete_all_data():
+    # Example: Remove all data from the table
+    with create_app().app_context():
+        Company.query.delete()
+        db.session.commit()
+
+if __name__ == "__main__":
+    update_schema()
+    seed_data()
+    import_from_csv('new_companies.csv')
+    cleanup_old_data()
+    print("Database update completed.")
