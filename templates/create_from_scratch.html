@@ -5,11 +5,10 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Create from Scratch</title>
   <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
-  <script src="path/to/your/script.js"></script> <!-- Include your JavaScript file here -->
 </head>
 <body>
   <h1>Create Market Map from Scratch</h1>
-  <form action="/create_from_scratch" method="post" enctype="multipart/form-data">
+  <form action="/create_market_map" method="post" enctype="multipart/form-data">
     <label for="market">Enter Market Keywords:</label>
     <input type="text" id="market" name="market" required><br>
 
@@ -28,7 +27,7 @@
     <label for="csv_file">Import CSV:</label>
     <input type="file" id="csv_file" name="csv_file" accept=".csv"><br>
 
-    <button type="submit">Create Market Map</button>
+    <button type="submit" >Create Market Map</button>
   </form>
 
   <!-- Dialogflow Chatbot Integration -->

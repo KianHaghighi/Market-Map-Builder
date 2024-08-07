@@ -190,6 +190,39 @@ def generate_companies_html(market):
     companies_html += '</div>'
     return companies_html
 
+@app.route('/create_market_map', methods=['POST'])
+def create_market_map():
+    # Get user input from the form
+    market = request.form['market']
+    subcategories = request.form['market'].split(',')
+    funding = float(request.form['funding'])
+    date_founded = request.form['date_founded']
+    location = request.form['location']
+    thesis = request.form['thesis']
+    
+    # Read the CSV file
+    csv_file = request.files['csv_file']
+    df = pd.read_csv(csv_file, encoding='ISO-8859-1')
+    
+    # Filter the data based on user input
+    filtered_df = df[
+        (df[' market '] == market) &
+        (df[' funding_total_usd '] >= funding) &
+        (df['founded_at'] >= date_founded) &
+        (df['region'] == location)
+    ]
+    
+    # Create a dictionary to hold sub-category data
+    market_map = {subcategory.strip(): [] for subcategory in subcategories}
+    
+    for subcategory in subcategories:
+        subcategory = subcategory.strip()
+        market_map[subcategory] = filtered_df[filtered_df['subcategory'] == subcategory]['company_name'].tolist()
+    
+    return render_template('market_map.html', market_map=market_map)
+
+
+
 @app.route('/create_from_scratch', methods=['GET', 'POST'])
 def create_from_scratch():
     project_id = os.getenv('DIALOGFLOW_PROJECT_ID')
