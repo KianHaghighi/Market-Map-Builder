@@ -7,31 +7,120 @@
 <body>
     <div class="container">
         <h1>Market Map</h1>
+        
+        <!-- Display the selected market -->
+        <h2>Market: {{ market }}</h2>
+        <h3>Subcategories</h3>
+        <ul>
+            {% if market == 'Finance' %}
+            <li>Fintech</li>
+            <li>Insurtech</li>
+            <li>Payments</li>
+            <li>Personal Finance</li>
+            <li>Real Estate</li>
+            <li>Banking</li>
+            {% endif %}
+            {% if market == 'Technology' %}
+            <li>Blockchain</li>
+            <li>Regtech</li>
+            <li>Artificial Intelligence</li>
+            <li>Cybersecurity</li>
+            <li>Cloud Computing</li>
+            <li>Internet of Things (IoT)</li>s
+            {% endif %}
+            {% if market == 'Business' %}
+            <li>B2B</li>
+            <li>Enterprise Software</li>
+            <li>E-commerce</li>
+            <li>Logistics</li>
+            <li>Supply Chain Management</li>
+            {% endif %}
+            {% if market == 'Healthcare' %}
+            <li>Digital Health</li>
+            <li>Biotech</li>
+            <li>Medtech</li>
+            <li>Telemedicine</li>
+            {% endif %}
+            {% if market == 'Consumer' %}
+            <li>Consumer Electronics</li>
+            <li>Food and Beverage</li>
+            <li>Retail</li>
+            <li>Travel and Hospitality</li>
+            {% endif %}
+            {% if market == 'Sustainability' %}
+            <li>Renewable Energy</li>
+            <li>Clean Tech</li>
+            <li>Sustainable Agriculture</li>
+            {% endif %}
+            
+
+        </ul>
+        
+        <!-- Display the companies that fit the market -->
+        <div class="mt-3">
+            <h3>Companies</h3>
+            <ul>
+                {% for company in companies %}
+                    <li>{{ company }}</li>
+                {% endfor %}
+            </ul>
+        </div>
+        
         <form method="POST" action="/market_map">
             <!-- Dropdown for selecting a market -->
             <div class="mb-3">
-                <label for="market" class="form-label">Select Market</label>
-                <select class="form-select" id="market" name="market">
-                    <option value="market1">Market 1</option>
-                    <option value="market2">Market 2</option>
-                    <option value="market3">Market 3</option>
+                <label for="market" class="form-label">Market</label>
+                <select id="market" name="market" class="form-select">
+                    <option value="Finance">Finance</option>
+                    <option value="Technology">Technology</option>
+                    <option value="Business">Business</option>
+                    <option value="Healthcare">Healthcare</option>
+                    <option value="Consumer">Consumer</option>
+                    <option value="Sustainability">Sustainability</option>
                 </select>
-            </div>
-
-            <!-- Checkboxes for selecting rows -->
-            <div class="mb-3">
-                <label class="form-label">Select Rows</label>
-                {{ checkboxes_html|safe }}
-            </div>
-
             <!-- Submit button -->
             <button type="submit" class="btn btn-primary">Submit</button>
         </form>
-
-        <!-- Display the DataFrame table -->
-        <div class="mt-3">
-            {{ markets_html|safe }}
-        </div>
     </div>
+    <!-- Display the companies that fit the market -->
+    <div class="mt-3">
+        <h3>Companies</h3>
+        <ul>
+            {% for company in companies %}
+                <li>{{ company }}</li>
+            {% endfor %}
+        </ul>
+    <script>
+        function generateMarketMapChart(marketMap) {
+            const chartContainer = document.getElementById('market-map-chart');
+            chartContainer.innerHTML = ''; // Clear any existing content
+
+            for (const [category, subcategories] of Object.entries(marketMap)) {
+                for (const [subcategory, companies] of Object.entries(subcategories)) {
+                    const subcategoryBox = document.createElement('div');
+                    subcategoryBox.className = 'col-md-4 subcategory-box';
+
+                    const subcategoryTitle = document.createElement('div');
+                    subcategoryTitle.className = 'subcategory-title';
+                    subcategoryTitle.textContent = subcategory;
+
+                    const companyList = document.createElement('ul');
+                    companies.forEach(company => {
+                        const companyItem = document.createElement('li');
+                        companyItem.textContent = company;
+                        companyList.appendChild(companyItem);
+                    });
+
+                    subcategoryBox.appendChild(subcategoryTitle);
+                    subcategoryBox.appendChild(companyList);
+                    chartContainer.appendChild(subcategoryBox);
+                }
+            }
+        }
+
+        // Example data, replace with actual data passed from the server
+        const marketMapData = JSON.parse('{{ market_map|default("{}", true)|tojson|safe }}');
+        generateMarketMapChart(marketMapData);
+    </script>
 </body>
 </html>
