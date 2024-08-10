@@ -40,7 +40,14 @@
         .btn:hover {
             background-color: #0056b3;
         }
+
+        #marketMap {
+            width: 80%;
+            height: 600px;
+            margin: 0 auto;
+        }
     </style>
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
 </head>
 <body>
     <h1>Welcome to the Market Map Builder</h1>
@@ -54,5 +61,28 @@
     <a href="/crunchbase_data" class="btn">Crunchbase Data</a>
     <div id="segmentNames"></div>
     <br>
+    <div id="marketMap"></div>
+
+    <script>
+        // Example data for a market map (treemap)
+        var data = [{
+            type: "treemap",
+            labels: ["Technology", "Healthcare", "Finance", "AI", "Biotech", "Fintech"],
+            parents: ["", "", "", "Technology", "Healthcare", "Finance"],
+            values: [100, 80, 60, 40, 30, 20],
+            textinfo: "label+value+percent parent+percent entry",
+            outsidetextfont: {size: 20, color: "#377eb8"},
+            marker: {line: {width: 2}},
+            pathbar: {visible: false}
+        }];
+
+        var layout = {
+            title: "Market Map",
+            width: 800,
+            height: 600
+        };
+
+        Plotly.newPlot('marketMap', data, layout);
+    </script>
 </body>
 </html>
