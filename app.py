@@ -4,6 +4,7 @@ from flask_sqlalchemy import SQLAlchemy
 import pandas as pd
 import requests
 import os
+#from transformers import pipeline
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:////tmp/test.db'
@@ -12,6 +13,7 @@ db = SQLAlchemy(app)
 PRODUCT_HUNT_API_TOKEN = os.getenv('PRODUCT_HUNT_API_TOKEN')
 CLIENT_ID = os.getenv('PRODUCT_HUNT_CLIENT_ID')
 CLIENT_SECRET = os.getenv('PRODUCT_HUNT_CLIENT_SECRET')
+
 
 @app.route('/')
 def index():
@@ -190,11 +192,13 @@ def generate_companies_html(market):
     companies_html += '</div>'
     return companies_html
 
+# Load the pre-trained model for classification
+#classifier = pipeline('zero-shot-classification', model='facebook/bart-large-mnli')
+
 @app.route('/create_market_map', methods=['POST'])
 def create_market_map():
     # Get user input from the form
     market = request.form['market']
-    subcategories = request.form['market'].split(',')
     funding = float(request.form['funding'])
     date_founded = request.form['date_founded']
     location = request.form['location']
@@ -204,22 +208,84 @@ def create_market_map():
     csv_file = request.files['csv_file']
     df = pd.read_csv(csv_file, encoding='ISO-8859-1')
     
+    # Ensure the columns are of the correct data type
+    df[' funding_total_usd '] = pd.to_numeric(df[' funding_total_usd '], errors='coerce')
+    df['founded_at'] = pd.to_datetime(df['founded_at'], errors='coerce')
+    
+    # Define predefined categories and subcategories
+    predefined_categories = {
+    "Finance": [
+        "Payments", 
+        "Lending", 
+        "Insurance", 
+        "Wealth Management", 
+        "Fintech Infrastructure", 
+        "Personal Finance", 
+        "Cryptocurrency"
+    ],
+    "Technology": [
+        "Blockchain", 
+        "Regtech", 
+        "Artificial Intelligence", 
+        "Cybersecurity", 
+        "Cloud Computing", 
+        "Internet of Things (IoT)"
+    ],
+    "Business": [
+        "B2B", 
+        "Enterprise Software", 
+        "E-commerce", 
+        "Logistics", 
+        "Supply Chain Management"
+    ],
+    "Healthcare": [
+        "Digital Health", 
+        "Biotech", 
+        "Medtech", 
+        "Telemedicine"
+    ],
+    "Consumer": [
+        "Consumer Electronics", 
+        "Food and Beverage", 
+        "Retail", 
+        "Travel and Hospitality"
+    ],
+    "Sustainability": [
+        "Renewable Energy", 
+        "Clean Tech", 
+        "Sustainable Agriculture"
+    ]
+}
     # Filter the data based on user input
     filtered_df = df[
         (df[' market '] == market) &
         (df[' funding_total_usd '] >= funding) &
-        (df['founded_at'] >= date_founded) &
+        (df['founded_at'] >= pd.to_datetime(date_founded)) &
         (df['region'] == location)
     ]
     
     # Create a dictionary to hold sub-category data
-    market_map = {subcategory.strip(): [] for subcategory in subcategories}
+    market_map = {category: [] for category in predefined_categories}
     
-    for subcategory in subcategories:
-        subcategory = subcategory.strip()
-        market_map[subcategory] = filtered_df[filtered_df['subcategory'] == subcategory]['company_name'].tolist()
+    # Check if 'subcategory' column exists
+    if 'subcategory' in df.columns:
+        # Proceed with filtering and processing
+        filtered_df = df[
+            (df['market'] == market) &
+            (df['funding_total_usd'] >= funding) &
+            (df['founded_at'] >= pd.to_datetime(date_founded)) &
+            (df['region'] == location)
+        ]
+        
+        # Populate the market_map with company names
+        for category, subcategories in predefined_categories.items():
+            for subcategory in subcategories:
+                companies = filtered_df[filtered_df['subcategory'] == subcategory]['company_name'].tolist()
+                market_map[category][subcategory] = companies
+    else:
+        print("Subcategory column not found.")
     
-    return render_template('market_map.html', market_map=market_map)
+    return render_template('market_map.html', market=market, market_map=market_map)
 
 
 
