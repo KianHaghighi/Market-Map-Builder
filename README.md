@@ -2,7 +2,7 @@
 
 This project is a web application that allows users to analyze and visualize data from Product Hunt and Crunchbase. The application is built using Flask and Pandas, and it provides functionalities to filter and display data based on user input.
 
-![Market Map Builder Homepage][Screenshot 2024-08-12 113159](https://github.com/user-attachments/assets/7927ca1a-3d6c-4485-a7bc-f54a053be0fe)
+![Market Map Builder Homepage](https://github.com/user-attachments/assets/7927ca1a-3d6c-4485-a7bc-f54a053be0fe)
 
 This screenshot shows the homepage of the Market Map Builder application, where users can upload or select CSV files for analysis.
 
